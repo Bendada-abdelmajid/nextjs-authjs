@@ -1,10 +1,6 @@
 import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
-import {
-  apiPrefixAuth,
-  authRoutes,
-  puplicRoutes,
-} from "./route";
+import { apiPrefixAuth, authRoutes, puplicRoutes } from "./route";
 
 
 const { auth } = NextAuth(authConfig);
@@ -25,14 +21,13 @@ export default auth((req) => {
     if (isLogedIn) {
       return Response.redirect(new URL("/", nextUrl));
     }
-    return ;
+    return;
   }
 
   if (!isPuplic && !isLogedIn) {
     return Response.redirect(new URL("/auth/signin", nextUrl));
   }
-
-  return ;
+  return;
 });
 
 export const config = {
