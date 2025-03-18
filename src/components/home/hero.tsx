@@ -10,7 +10,7 @@ import { getIp } from '@/actions/get-ip-address'
 const Hero = () => {
     const hundle = async () => {
         const res = await getIp()
-        console.log({ res })
+        console.log("get it")
     }
     return (
         <section>
