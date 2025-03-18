@@ -10,6 +10,6 @@ export const getIp = async () => {
   const country = headersInstance.get("x-vercel-ip-country") || "Unknown";
   const region = headersInstance.get("x-vercel-ip-country-region") || "Unknown";
   const code = headersInstance.get("'x-vercel-ip-postal-code')") || "Unknown";
-  console.log({ ip, city, country, region, code });
-  return "complete";
+
+  return { ip, city, country, region, code };
 };
