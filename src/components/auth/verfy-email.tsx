@@ -38,15 +38,7 @@ function VerfyEmail({ email, title, suuccessFunction }: Props) {
                 return;
             }
             setSuccess(res?.success || null)
-
-            // Automatically log the user in after verification
             suuccessFunction()
-
-            // if (loginResult?.error) {
-            //     setError("Login failed after verification.");
-            // } else {
-            //     router.push("/"); // Redirect to dashboard
-            // }
         } catch {
             setError("Something went wrong")
         } finally {

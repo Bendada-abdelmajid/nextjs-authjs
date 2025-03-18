@@ -19,7 +19,6 @@ const PasswordForm = () => {
     const [success, setSuccess] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
-
         e.preventDefault();
         setError("");
         if (newPassword !== confirmPassword) {
@@ -35,9 +34,7 @@ const PasswordForm = () => {
                 setError(res.error)
                 return
             }
-
             setSuccess(res?.success || 'password  updated successfully!')
-
         } catch (error) {
             setError("Failed to update password. Please try again.");
         } finally {
@@ -59,7 +56,7 @@ const PasswordForm = () => {
                         required
                     />
                 </div> :
-                <p className="text-sm text-gray-600 mb-5">You're using a third-party login. Set a password below if needed.</p>}
+                <p className="text-sm opacity-60 mb-5">You're using a third-party login. Set a password below if needed.</p>}
 
             <div className={` grid gap-4 ${user?.hasPassowred ? " md:grid-cols-2":""} ` }>
                 <div className="space-y-2">

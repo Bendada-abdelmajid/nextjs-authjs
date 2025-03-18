@@ -25,10 +25,10 @@ export default function SignIn() {
             password: password,
             redirect: false,
         });
-
+        router.push("/")
     }
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
             {active == "login" && <SignInForm email={email} password={password} setEmail={setEmail} setPassword={setPassword} setActive={setActive} />}
             {active == "verify-email" && <VerfyEmail title="Verify your email" email={email} suuccessFunction={signin} />}
             {active == "send-password-code" && <VerfyEmail title="Reset password" email={email} suuccessFunction={()=> setActive("reset-password")} />}

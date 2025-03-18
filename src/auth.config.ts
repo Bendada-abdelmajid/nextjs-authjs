@@ -38,6 +38,7 @@ export default {
           emailVerified:user.emailVerified,
           image:user.image,
           hasPassowred:user.password ? true:false,
+          
 
         };
       }

@@ -73,6 +73,7 @@ const DeleteForm = ({ setDelete }: { setDelete: React.Dispatch<React.SetStateAct
             <div className='absolute h-full w-full inset-0 bg-black/20 z-20' />
             <div className='absolute py-5 w-full max-w-sm  bg-white z-30 border rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                 <CardHeader className=''>
+                
                     <CardTitle >Delete account</CardTitle>
                     <CardDescription>Are you sure you want to delete your account?
                         <br /><span className='text-destructive'>This action is permanent and irreversible.</span></CardDescription>

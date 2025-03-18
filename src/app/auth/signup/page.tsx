@@ -28,7 +28,7 @@ export default function SignUp() {
 }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
       {!verifyEmail ?
         <SignupForm email={email} password={password} name={name} setEmail={setEmail} setName={setName} setPassword={setPassword} setVerifyEmail={setVerifyEmail} />
         : <VerfyEmail title="Verify your email" email={email} suuccessFunction={signin} />}

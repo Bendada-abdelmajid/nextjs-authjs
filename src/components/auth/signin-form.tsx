@@ -189,8 +189,7 @@ const SignInForm = ({ email, password, setEmail, setPassword, setActive }: Props
                                 </Button>
                             </div>
                             {validEmail ? <Button variant={"link"} onClick={() => setValidEmail(false)}>Back</Button> : <div className="text-center text-sm">
-                                Don&apos;t have an account?
-                                <Link href="/auth/signup" className="underline underline-offset-4">
+                                Don&apos;t have an account? <Link href="/auth/signup" className="underline underline-offset-4">
                                     Sign up
                                 </Link>
                             </div>}

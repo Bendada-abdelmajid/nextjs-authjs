@@ -11,34 +11,28 @@ import { updateEmail } from '@/actions/update-email'
 
 
 
-const EmailForm = ({cancel}:{cancel:()=>void}) => {
-    
+const EmailForm = ({ cancel }: { cancel: () => void }) => {
+
     const [email, setEmail] = useState('')
-
-    const [otp, setOtp] = useState('')
     const [error, setError] = useState('')
-
     const [isLoading, setIsLoading] = useState(false)
     const [verifyEmail, setVerifyEmail] = useState(false)
     const hundleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
-        setOtp("")
         try {
             setIsLoading(true)
-            if(email ==""){
+            if (email == "") {
                 setError("Please enter email")
                 return
             }
-            const res = await sendVerification(email, false)
-            setOtp(res)
+            await sendVerification(email)
             setVerifyEmail(true)
         } catch (error) {
             setError("Something went wrong")
         } finally {
             setIsLoading(false)
         }
-
 
     }
 
@@ -50,10 +44,10 @@ const EmailForm = ({cancel}:{cancel:()=>void}) => {
                 <div>
                     <h4 className='font-medium'>Update email address</h4>
                     <div className='text-sm flex  text-orange-500 mt-2'> <TriangleAlert className='inline-flex self-center mr-1' size={16} />
-                    <p>You'll need to verify this email address before it can be added to your account.</p></div>
+                        <p>You'll need to verify this email address before it can be added to your account.</p></div>
                 </div>
 
-             
+
                 <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -65,18 +59,17 @@ const EmailForm = ({cancel}:{cancel:()=>void}) => {
                         <p className='text-xm opacity-70'>{error}</p>
                     </div>
                 </div>}
-               <div className="flex justify-end items-center gap-2">
-               <Button disabled={isLoading} type='button' onClick={cancel} variant={"outline"} className='min-w-20'>Cancel </Button>
-               <Button disabled={isLoading} className='min-w-20'>Update {isLoading && <Loader className='animate-spin' />}</Button>
-               </div>
-
+                <div className="flex justify-end items-center gap-2">
+                    <Button disabled={isLoading} type='button' onClick={cancel} variant={"outline"} className='min-w-20'>Cancel </Button>
+                    <Button disabled={isLoading} className='min-w-20'>Update {isLoading && <Loader className='animate-spin' />}</Button>
+                </div>
             </form>
-            {verifyEmail && <VerfyEmail email={email} code={otp} setVerifyEmail={setVerifyEmail} />}
+            {verifyEmail && <VerfyEmail email={email} setVerifyEmail={setVerifyEmail} />}
         </div>
 
     )
 }
-const VerfyEmail = ({ email, code, setVerifyEmail }: { email: string, code: string, setVerifyEmail: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const VerfyEmail = ({ email, setVerifyEmail }: { email: string, setVerifyEmail: React.Dispatch<React.SetStateAction<boolean>> }) => {
     const [otp, setOtp] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
@@ -86,30 +79,23 @@ const VerfyEmail = ({ email, code, setVerifyEmail }: { email: string, code: stri
         setSuccess("")
         setIsLoading(true)
         try {
-            if (otp !== code) {
-                setError('Invalid code')
-                return
-            }
-            const res = await updateEmail(email)
+
+            const res = await updateEmail(email, otp)
             if (res.error) {
                 setError(res.error)
                 return
             }
-
             setSuccess(res?.success || 'Email updated successfully!')
-            setVerifyEmail(false)
-
+            setTimeout(() => {
+                setVerifyEmail(false)
+            }, 1000);
         } catch (error) {
             console.log(error)
             setError('Something went wrong')
         } finally {
             setIsLoading(false)
         }
-
-
-
     }
-
     return (
         <>
             <div className='absolute h-full w-full inset-0 bg-black/20 z-20' />
@@ -117,7 +103,7 @@ const VerfyEmail = ({ email, code, setVerifyEmail }: { email: string, code: stri
                 <CardHeader className='text-center'>
                     <CardTitle >Verify your email</CardTitle>
                     <CardDescription>Enter the verification code sent to
-                        your email <br />{email} <button onClick={()=> setVerifyEmail(false)} className='cursor-pointer inline-flex p-1 align-middle opacity-70 hover:opacity-100'><Pencil size={16}/></button>  </CardDescription>
+                        your email <br />{email} <button onClick={() => setVerifyEmail(false)} className='cursor-pointer inline-flex p-1 align-middle opacity-70 hover:opacity-100'><Pencil size={16} /></button>  </CardDescription>
                     {success && <div className='bg-green-100 rounded-lg p-3 items-center mt-4 flex gap-4 '>
                         <CircleCheckBig className='text-green-500' />
                         <div className='text-left'>

@@ -19,7 +19,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
     },
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account }) {
       if (user) {
         token.id = user.id;
         token.emailVerified = user.emailVerified;
@@ -30,12 +30,16 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         console.log(token);
         token.picture = null;
       }
+      if (account) {
+        token.provider = account.provider;
+      }
       return token;
     },
-    async session({ session, token, trigger, newSession, user }) {
+    async session({ session, token}) {
       session.user.id = token.id as string;
       session.user.emailVerified = token.emailVerified as Date | null;
       session.user.hasPassowred = token.hasPassowred;
+      session.user.provider = token.provider;
 
       return session;
     },
