@@ -18,21 +18,21 @@ export default auth((req) => {
   const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
-    return null;
+    return;
   }
 
   if (isAuthRoutes) {
     if (isLogedIn) {
       return Response.redirect(new URL("/", nextUrl));
     }
-    return null;
+    return ;
   }
 
   if (!isPuplic && !isLogedIn) {
     return Response.redirect(new URL("/auth/signin", nextUrl));
   }
 
-  return null;
+  return ;
 });
 
 export const config = {

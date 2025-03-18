@@ -1,7 +1,7 @@
 "use client"
 
 import { signIn, useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import SignInForm from "@/components/auth/signin-form"
@@ -29,7 +29,7 @@ export default function SignIn() {
     }
     return (
         <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
-            {active == "login" && <SignInForm email={email} password={password} setEmail={setEmail} setPassword={setPassword} setActive={setActive} />}
+            {active == "login" &&   <Suspense> <SignInForm email={email} password={password} setEmail={setEmail} setPassword={setPassword} setActive={setActive} /> </Suspense>}
             {active == "verify-email" && <VerfyEmail title="Verify your email" email={email} suuccessFunction={signin} />}
             {active == "send-password-code" && <VerfyEmail title="Reset password" email={email} suuccessFunction={()=> setActive("reset-password")} />}
             {active == "reset-password" && <ResetPasswordForm setActive={setActive} email={email}/>}
