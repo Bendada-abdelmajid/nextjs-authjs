@@ -11,6 +11,7 @@ const Hero = () => {
     const hundle = async () => {
         const res = await getIp()
         console.log("get it")
+        console.log(res)
     }
     return (
         <section>
