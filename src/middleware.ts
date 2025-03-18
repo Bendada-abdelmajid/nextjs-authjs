@@ -5,7 +5,7 @@ import {
   authRoutes,
   puplicRoutes,
 } from "./route";
-import { NextResponse } from "next/server";
+
 
 const { auth } = NextAuth(authConfig);
 
@@ -23,7 +23,7 @@ export default auth((req) => {
 
   if (isAuthRoutes) {
     if (isLogedIn) {
-      return Response.redirect(new URL("/profile", nextUrl));
+      return Response.redirect(new URL("/", nextUrl));
     }
     return null;
   }
