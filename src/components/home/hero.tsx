@@ -25,7 +25,9 @@ const Hero = () => {
                 <CopyToClipboard />
                 <div className="flex flex-wrap justify-center gap-4 mt-10">
                     <Button  size="lg" variant="outline">
+                    <Link href={"https://github.com/Bendada-abdelmajid/nextjs-authjs.git"} >
                         <Github /> Github
+                        </Link>
                     </Button>
                     <Button size="lg" asChild>
                         <Link href={"#guides"} >Get started</Link></Button>
