@@ -15,7 +15,7 @@ import ProfileForm from "./profile-form";
 import DeleteAccount from "./delete-account";
 import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
-import { getUserAccounts } from "@/actions/user-accounts";
+import { getUserAccounts } from "@/actions/profile/user-accounts";
 import { UseCurrentUser } from "@/lib/use-current-user";
 type Props = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;

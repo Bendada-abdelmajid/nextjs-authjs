@@ -4,6 +4,8 @@ import "./globals.css";
 
 import SessionProvider from "@/lib/SessionProvider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { auth } from "@/auth";
+
 
 
 const geistSans = Roboto({
@@ -19,10 +21,11 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children,
+  children, 
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth()
 
   return (
 
@@ -30,19 +33,19 @@ export default async function RootLayout({
       <body
         className={`${geistSans.className}  antialiased`}
       >
-        <SessionProvider>
-        <ThemeProvider
-    attribute="class"
-    defaultTheme="system"
-    enableSystem
-    disableTransitionOnChange
-  >
+        <SessionProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
-            </ThemeProvider>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
-  
+
 
   );
 }

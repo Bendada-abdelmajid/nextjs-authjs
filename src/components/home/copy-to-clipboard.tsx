@@ -4,7 +4,7 @@ import { Copy, Check } from "lucide-react";
 import { Button } from "../ui/button";
 
 
-export const repo = "https://github.com/iamtouha/next-lucia-auth"
+export const repo = "https://github.com/Bendada-abdelmajid/nextjs-authjs.git"
 export default function CopyToClipboard() {
   const [copied, setCopied] = useState(false);
 

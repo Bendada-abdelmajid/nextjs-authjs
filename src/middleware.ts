@@ -8,6 +8,7 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { nextUrl } = req;
   const isLogedIn = !!req.auth;
+  
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiPrefixAuth);
   const isPuplic = puplicRoutes.includes(nextUrl.pathname);
@@ -25,7 +26,7 @@ export default auth((req) => {
   }
 
   if (!isPuplic && !isLogedIn) {
-    return Response.redirect(new URL("/auth/signin", nextUrl));
+    return Response.redirect(new URL("/auth/sign-in", nextUrl));
   }
   return;
 });

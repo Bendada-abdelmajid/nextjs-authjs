@@ -1,18 +1,13 @@
-"use client";
 import React from 'react'
 import { Button } from '../ui/button'
 import { Github } from 'lucide-react'
 import CopyToClipboard from './copy-to-clipboard'
 import Link from 'next/link'
-import { getIp } from '@/actions/get-ip-address'
+
 
 
 const Hero = () => {
-    const hundle = async () => {
-        const res = await getIp()
-        console.log("get it")
-        console.log(res)
-    }
+
     return (
         <section>
             <div className="text-center mt-24 mb-10 space-y-4">
@@ -29,7 +24,7 @@ const Hero = () => {
                 </p>
                 <CopyToClipboard />
                 <div className="flex flex-wrap justify-center gap-4 mt-10">
-                    <Button onClick={hundle} size="lg" variant="outline">
+                    <Button  size="lg" variant="outline">
                         <Github /> Github
                     </Button>
                     <Button size="lg" asChild>

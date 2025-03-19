@@ -7,7 +7,7 @@ import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { CircleCheckBig, Edit, Loader, Pencil, TriangleAlert } from 'lucide-react'
 import { InputOTP, InputOTPSlot } from '../ui/input-otp'
 import { sendVerification } from '@/actions/send-verification'
-import { updateEmail } from '@/actions/update-email'
+import { updateEmail } from '@/actions/profile/update-email'
 
 
 
@@ -64,12 +64,12 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
                     <Button disabled={isLoading} className='min-w-20'>Update {isLoading && <Loader className='animate-spin' />}</Button>
                 </div>
             </form>
-            {verifyEmail && <VerfyEmail email={email} setVerifyEmail={setVerifyEmail} />}
+            {verifyEmail && <VerifyEmail email={email} setVerifyEmail={setVerifyEmail} />}
         </div>
 
     )
 }
-const VerfyEmail = ({ email, setVerifyEmail }: { email: string, setVerifyEmail: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const VerifyEmail = ({ email, setVerifyEmail }: { email: string, setVerifyEmail: React.Dispatch<React.SetStateAction<boolean>> }) => {
     const [otp, setOtp] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')

@@ -2,12 +2,14 @@
 
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
-import { sendVerification } from "./send-verification";
+import { sendVerification } from "../send-verification";
+import { cookies } from "next/headers";
 
-export const sendCodeForPasswordReset = async (email: string) => {
-  if (!email) {
-    return { error: "Please enter email" };
-  }
+export const sendCodeForPasswordReset = async () => {
+   const email = (await cookies()).get("login_email")?.value;
+   if (!email) {
+     return { error: "Please enter email" };
+   }
 
   const user = await prisma.user.findUnique({ where: { email } });
 

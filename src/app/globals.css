@@ -125,6 +125,9 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
 
 pre {
   @apply text-secondary-foreground bg-secondary/70 p-3 rounded-lg mt-4
@@ -132,3 +135,4 @@ pre {
 code {
   @apply text-sm leading-[1.6] text-wrap
 }
+

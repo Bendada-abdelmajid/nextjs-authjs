@@ -2,47 +2,109 @@
 import { UseCurrentUser } from '@/lib/use-current-user'
 import React, { useRef, useState } from 'react'
 
-import { ArrowRight, ImageIcon, TriangleAlert } from 'lucide-react'
+import { ArrowRight, ImageIcon, Loader, TriangleAlert } from 'lucide-react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Separator } from '../ui/separator'
-import { deleteFileFromS3, uploadProfileImage } from '@/actions/uplode-profile-image'
+import { deleteFileFromS3, uploadProfileImage } from '@/actions/profile/profile-image'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import EmailForm from './email-form'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { profileSchema } from '@/lib/schemas'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
+import { updateProfile } from '@/actions/profile/update-profile'
+import { z } from 'zod'
+import SuccessAlert from '../ui/success-alert'
+import ErrorAlert from '../ui/error-alert'
 
 type Props = {
     setActiveTab: (tab: string) => void
 }
 
 const ProfileForm = ({ setActiveTab }: Props) => {
+    const {data, update } = useSession();
     const user = UseCurrentUser()
     const [upadetEmail, setUpadetEmail] = useState(false)
-    const [name, setName] = useState(user?.name)
-    const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber)
+    const [isLoading, setIsLoading]= useState(false)
+    const [success, setSuccess] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
-    const handleSubmit = async () => {
+    const form = useForm<z.infer<typeof profileSchema>>({
+        resolver: zodResolver(profileSchema),
+        defaultValues: {
+            name: user?.name || "",
+            phone: user?.phone || "",
+        }
+    });
+    async function onSubmit(values: z.infer<typeof profileSchema>) {
+        setError(null)
+        setSuccess(null)
+        setIsLoading(true)
+        try {
+            const res = await updateProfile(values)
+            if (res.error) {
+                setError(res.error);
+                return;
+            }
+            if (res.success) {
+                await update({...user, name:values.name, phone:values.phone })
+                setSuccess(res.success)
+                setTimeout(() => {
+                    setSuccess(null)
+                }, 3000);
+              
+            }
 
+        } catch {
+            setError("Something went wrong");
+        } finally {
+            setIsLoading(false);
+        }
     }
     return (
         <div className="space-y-6">
 
             <UploadImage />
             <Separator />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <SuccessAlert success={success}/>
+                    <ErrorAlert error={error}/>
+                    <Button type="submit" disabled={isLoading}> {isLoading &&<Loader size={17} className="animate-spin" /> }Save changes</Button>
+                </form>
+            </Form>
 
-            <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                    <Label htmlFor="firstName">First name</Label>
-                    <Input id="firstName" defaultValue={name} />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="lastName">Phone number</Label>
-                    <Input id="lastName" defaultValue="Doe" />
-                </div>
-            </div>
-            <Button>Save changes</Button>
             <Separator />
             {!upadetEmail ? <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -51,7 +113,7 @@ const ProfileForm = ({ setActiveTab }: Props) => {
                 </div>
                 <Input id="email" type="email" defaultValue={user?.email} readOnly />
             </div>
-                : <EmailForm cancel={()=> setUpadetEmail(false)} />}
+                : <EmailForm cancel={() => setUpadetEmail(false)} />}
 
 
         </div>
@@ -66,6 +128,8 @@ const UploadImage = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { data: session, update } = useSession();
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setError(""); 
+        setUploading(true);
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -79,9 +143,7 @@ const UploadImage = () => {
             setError("File size exceeds 3MB limit.");
             return;
         }
-        setError(""); // Clear any previous error
-        setUploading(true);
-
+      
         // Show preview before uploading
         const fakeUrl = URL.createObjectURL(file);
         setImage(fakeUrl);
@@ -92,7 +154,7 @@ const UploadImage = () => {
         if (res.error) {
             setError(res.error as string);
         }
-
+        update({ image: res.file })
         setUploading(false);
     };
 
@@ -101,7 +163,7 @@ const UploadImage = () => {
         setError("");
         try {
             await deleteFileFromS3(user.image)
-            update({ image: "" })
+            update({ image: "delete" })
             setImage(null);
         } catch (error) {
             setError(error as string || "Failed to delete image from S3.");

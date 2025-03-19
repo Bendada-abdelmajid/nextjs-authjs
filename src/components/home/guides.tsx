@@ -1,5 +1,7 @@
-import React from 'react'
-import { repo } from './copy-to-clipboard'
+"use client"
+import React, { useState } from 'react'
+import { Check, Copy } from 'lucide-react'
+import { clone, copy_variables, install, prisma, run, variables } from '@/lib/guides'
 
 
 const Guides = () => {
@@ -10,14 +12,11 @@ const Guides = () => {
             <ol className="list-decimal list-inside   space-y-5 mt-6">
                 <li>
                     <h4 className="inline-block">Clone the repository</h4>
-                    <pre><code className="">
-                        {`git clone https://github.com/iamtouha/next-lucia-auth
-cd clreck-clone`}
-                    </code></pre>
+                   <Code code={clone}/>
                 </li>
                 <li>
                     <h4 className="inline-block">Install dependencies</h4>
-                    <pre><code className="">{`npm install`}</code></pre>
+                    <Code code={install}/>
                 </li>
                 <li>
                     <h4 className="inline-block">
@@ -27,36 +26,42 @@ cd clreck-clone`}
                         To configure the environment variables, create a `.env` file in
                         the root of the project and set the following variables:
                     </p>
-                    <pre>
-                        <code className="inline-block">
-                            {`NEXTAUTH_URL= # Your NextAuth URL (e.g., http://localhost:3000)
-NEXTAUTH_SECRET= # A secret key for NextAuth encryption
-
-AUTH_GOOGLE_ID= # Google OAuth Client ID (create it in Google Developer Console: https://console.developers.google.com/)
-AUTH_GOOGLE_SECRET= # Google OAuth Secret (generated in the same place as the Client ID)
-
-AUTH_LINKEDIN_ID= # LinkedIn OAuth Client ID (create it in LinkedIn Developer Portal: https://www.linkedin.com/developers/)
-AUTH_LINKEDIN_SECRET= # LinkedIn OAuth Secret (generated in the same place as the Client ID)
-
-EMAIL_FROM= # The email address you'll use to send verification and reset emails
-EMAIL_PASSWORD= # Password or application-specific password for your email account
-
-AWS_S3_SECRET_ACCESS_KEY= # AWS S3 Secret Access Key (generate it in the AWS IAM Console: https://console.aws.amazon.com/iam/)
-AWS_S3_ACCESS_KEY_ID= # AWS S3 Access Key ID (also in IAM Console)
-AWS_S3_REGION= # AWS S3 Region (e.g., us-east-1)
-AWS_S3_BUCKET_NAME= # Your S3 Bucket Name (create it in the AWS S3 Console: https://console.aws.amazon.com/s3/)`}
-                        </code></pre>
-                </li>
+                    <Code code={variables} copyCode={copy_variables}/>
+                    </li>
                 <li className="">
                     <h4 className="inline-block">Generate Prisma client</h4>
-                    <pre> <code className="">{`npx prisma generate`}</code></pre>
+                    <Code code={prisma}/>
                 </li>
                 <li className="">
                     <h4 className="inline-block">run and enjoy</h4>
-                    <pre> <code className="">{`npm run dev`}</code></pre>
+                    <Code code={run}/>
                 </li>
             </ol>
         </section>
+    )
+}
+
+const Code = ({ code, copyCode = undefined }: { code: string, copyCode?: string }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(copyCode ? copyCode : code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000); // Reset after 2 sec
+        } catch (error) {
+            console.error("Failed to copy text:", error);
+        }
+    };
+    return (
+        <pre className='relative'>
+            <code className="inline-block">
+                {code}
+            </code>
+            <button className='absolute top-1 right-1 transition-opacity cursor-pointer p-2 opacity-75 hover:opacity-100' onClick={handleCopy} >
+                {copied ? <Check size={16} /> : <Copy size={18} />}
+            </button>
+        </pre>
     )
 }
 

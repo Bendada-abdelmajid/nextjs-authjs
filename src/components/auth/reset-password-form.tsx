@@ -1,104 +1,140 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Label } from '../ui/label'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
-import { CircleCheckBig, Loader, TriangleAlert } from 'lucide-react'
-import { LoginSteps } from '@/lib/types'
-import { resetPassword } from '@/actions/resset-password'
-import { signIn } from 'next-auth/react'
+"use client";
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Loader } from "lucide-react";
+import { resetPassword } from "@/actions/auth/resset-password";
+import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { resetPasswordSchema } from "@/lib/schemas";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import ErrorAlert from "../ui/error-alert";
+import SuccessAlert from "../ui/success-alert";
+import VerifyCode from "./verify-code";
 
 type Props = {
-  setActive: Dispatch<SetStateAction<LoginSteps>>;
   email: string;
-}
+};
 
-const ResetPasswordForm = ({ setActive, email }: Props) => {
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+const ResetPasswordForm = ({ email }: Props) => {
+  const [isValid, setIsValide] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState('')
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
-
+  const [success, setSuccess] = useState("");
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
     try {
-
       const res = await resetPassword({
-        password: newPassword,
-        confirmPassword, email
-      })
+        password: values.newPassword,
+        confirmPassword: values.confirmPassword,
+        email,
+      });
       if (res.error) {
-        setError(res.error)
-        return
-
+        setError(res.error);
+        return;
       }
       if (res.success) {
-        setSuccess(res.success)
-        const loginResult = await signIn("credentials", {
+        setSuccess(res.success);
+        await signIn("credentials", {
           email: email,
-          password: newPassword,
+          password: values.newPassword,
           redirectTo: "/",
         });
       }
-
     } catch {
-      setError("Something went wrong")
+      setError("Something went wrong");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-
-  }
-  return (
-    <Card className="w-full max-w-sm ">
+  };
+  return !isValid ? (
+    <VerifyCode
+      email={email}
+      title="Reset password"
+      setIsValide={setIsValide}
+    />
+  ) : (
+    <Card className="w-sm ">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl capitalize font-semibold ">Set new password</CardTitle>
-        {success && <div className='bg-green-100 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-          <CircleCheckBig className='text-green-500' />
-          <div className='text-left'>
-            <h4 className='text-xs font-medium'>success</h4>
-            <p className='text-xm opacity-70'>{success}</p>
-          </div>
-        </div>}
-        {error && <div className='bg-destructive/5 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-          <TriangleAlert className='text-destructive/60' />
-          <div className='text-left'>
-            <h4 className='text-xs font-medium'>Error</h4>
-            <p className='text-xm opacity-70'>{error}</p>
-          </div>
-        </div>}
+        <CardTitle className="text-xl capitalize font-semibold ">
+          Set new password
+        </CardTitle>
+        <SuccessAlert success={success} />
+        <ErrorAlert error={error} />
       </CardHeader>
       <CardContent>
-        <form className='space-y-6 mt-4' onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="new-password">New password</Label>
-            <Input
-              id="new-password"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 mt-4"
+          >
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="shadcn"
+                      className="pr-10"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm password</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="shadcn"
+                      className="pr-10"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button className='w-full' disabled={isLoading}>{isLoading ? <Loader className='animate-spin' /> : "Reset Password "}</Button>
-        </form>
-        {/* <Button variant={"link"} onClick={()=>setActive("login")} className='mx-auto mt-3 flex' disabled={isLoading} >Back</Button> */}
+            <Button className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                "Reset Password "
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ResetPasswordForm
+export default ResetPasswordForm;

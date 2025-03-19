@@ -10,7 +10,8 @@ import UserButton from '../profile/user-btn'
 const Header = () => {
     return (
         <header className="flex py-5 top-0 sticky z-20 bg-background justify-between items-center">
-            <ShieldUser strokeWidth={1.3} size={24} />
+            <Link href={"/"}><ShieldUser strokeWidth={1.3} size={24} />
+            </Link>
             <div className="flex items-center gap-5">
                 <Link href={"#features"} className="text-sm">
                     Features
@@ -23,7 +24,7 @@ const Header = () => {
                 </SignedIn>
                 <SignedOut>
                     <Button size={"sm"}>
-                        <Link href={"/auth/signin"}>Login</Link>
+                        <Link href={"/auth/sign-in"}>Login</Link>
                     </Button>
                 </SignedOut>
             </div>

@@ -1,7 +1,7 @@
 /**
  * @type {string[]} puplicRoutes
  */
-export const puplicRoutes: string[] = [];
+export const puplicRoutes: string[] = ["/"];
 /**
  * @type {string[]} privateRoutes
  */
@@ -9,7 +9,7 @@ export const privateRoutes = ["/dashboard"];
 /**
  * @type {string[]} authRoutes
  */
-export const authRoutes = ["/auth/signin", "/auth/signup"];
+export const authRoutes = ["/auth/sign-in","/auth/sign-in/factor-one", "/auth/sign-in/reset-password", "/auth/sign-up", "/auth/verify-email", "/auth/error"];
 
 /**
  * @type {string} apiPrefixAuth

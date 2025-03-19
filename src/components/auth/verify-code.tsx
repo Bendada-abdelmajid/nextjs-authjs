@@ -1,44 +1,49 @@
+"use client";
 import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { InputOTP, InputOTPSlot } from '../ui/input-otp';
 import { Button } from '../ui/button';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { CircleCheckBig, Loader, TriangleAlert } from 'lucide-react';
 import { verifyEmail } from '@/actions/verify-code';
+import { sendVerification } from '@/actions/send-verification';
+
+
+
 
 type Props = {
     title: string;
     email: string;
-    suuccessFunction: () => void
+    setIsValide:(value:boolean)=>void
+
 }
 
-function VerfyEmail({ email, title, suuccessFunction }: Props) {
+function VerifyCode({ email, title , setIsValide}: Props) {
+   
     const [otp, setOtp] = useState('')
-    const router = useRouter()
     const [error, setError] = useState('')
     const [success, setSuccess] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const sendVerificationCode = async () => {
-        const res = await fetch("/api/auth/send-verification-email", {
-            method: "POST",
-            body: JSON.stringify({ email }),
-            headers: { "Content-Type": "application/json" },
-        });
-        const data = await res.json();
-        setError(data.message || data.error);
+    const resend = async () => {
+        try {
+            await sendVerification(email)
+            setSuccess("Verification email sent with success")
+        } catch (error) {
+            setError("Failed to send verification email. Please try again later.");
+        }
     };
     const verifyCode = async () => {
         setError("")
         setIsLoading(true)
         try {
-            const res = await verifyEmail(email, otp);
+            const res = await verifyEmail(otp);
             if (res.error) {
                 setError(res.error);
+                setOtp("")
                 return;
             }
             setSuccess(res?.success || null)
-            suuccessFunction()
+             setIsValide(true)
+        
         } catch {
             setError("Something went wrong")
         } finally {
@@ -73,7 +78,7 @@ function VerfyEmail({ email, title, suuccessFunction }: Props) {
                         <InputOTPSlot key={i + "otp"} index={i} className='border rounded-sm' />
                     ))}
                 </InputOTP>
-                <Button type='button' onClick={sendVerificationCode} variant={"link"} className="text-center mt-2 flex">Didn't receive a code? Resend</Button>
+                <Button type='button' onClick={resend} variant={"link"} className="text-center mt-2 flex">Didn't receive a code? Resend</Button>
             </CardContent>
 
             <Button onClick={verifyCode} disabled={isLoading} className="w-[80%] mx-auto">Verify {isLoading && <Loader className='animate-spin' />}</Button>
@@ -83,4 +88,4 @@ function VerfyEmail({ email, title, suuccessFunction }: Props) {
     )
 }
 
-export default VerfyEmail
+export default VerifyCode

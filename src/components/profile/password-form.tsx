@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Button } from '../ui/button'
-import { updatePassword } from '@/actions/update-password'
+import { updatePassword } from '@/actions/profile/update-password'
 import { CircleCheckBig, TriangleAlert } from 'lucide-react'
 import { UseCurrentUser } from '@/lib/use-current-user'
 

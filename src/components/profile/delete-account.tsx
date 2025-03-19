@@ -2,10 +2,10 @@
 import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { CircleCheckBig, Eye, EyeOff, Loader, Trash2, TriangleAlert } from 'lucide-react'
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Label } from '@radix-ui/react-label'
 import { Input } from '../ui/input'
-import { deleteAccount } from '@/actions/delete-account';
+import { deleteAccount } from '@/actions/profile/delete-account';
 import { signOut } from 'next-auth/react';
 
 
@@ -50,12 +50,12 @@ const DeleteForm = ({ setDelete }: { setDelete: React.Dispatch<React.SetStateAct
                 setError(res.error)
                 return
             }
-            if(res.success ){
+            if (res.success) {
                 setSuccess(res?.success || 'Account deleted successfully!')
                 setDelete(false)
                 await signOut()
             }
-        
+
 
         } catch (error) {
             console.log(error)
@@ -71,9 +71,9 @@ const DeleteForm = ({ setDelete }: { setDelete: React.Dispatch<React.SetStateAct
     return (
         <>
             <div className='absolute h-full w-full inset-0 bg-black/20 z-20' />
-            <div className='absolute py-5 w-full max-w-sm  bg-white z-30 border rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+            <Card className='absolute  w-full max-w-sm  z-30 border rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
                 <CardHeader className=''>
-                
+
                     <CardTitle >Delete account</CardTitle>
                     <CardDescription>Are you sure you want to delete your account?
                         <br /><span className='text-destructive'>This action is permanent and irreversible.</span></CardDescription>
@@ -101,7 +101,7 @@ const DeleteForm = ({ setDelete }: { setDelete: React.Dispatch<React.SetStateAct
                     <Button variant={"secondary"} onClick={() => setDelete(false)}>Cancel</Button>
                     <Button disabled={isLoading || command !== correctCommand} variant={"destructive"} onClick={verifyCode} >Delete account {isLoading && <Loader className='animate-spin' />}</Button>
                 </CardFooter>
-            </div>
+            </Card>
         </>
     )
 }
