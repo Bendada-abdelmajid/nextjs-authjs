@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Auth Starter
 
-## Getting Started
+A simple authentication template using Next.js, Auth.js (NextAuth), and Server Actions.
+##  Live Demo
+https://nextjs-authjsv5.vercel.app/
+## Setup
 
-First, run the development server:
+1. Clone the repository:
+
+
+```bash
+https://github.com/Bendada-abdelmajid/nextjs-authjs.git
+
+```
+2. Install dependencies:
+
+```bash
+npm install
+
+```
+3. Set up environment variables (`.env.local`):
+
+```bash
+DATABASE_URL=
+NEXTAUTH_URL= # Your NextAuth URL (e.g., http://localhost:3000)
+NEXTAUTH_SECRET= # A secret key for NextAuth encryption
+
+AUTH_GOOGLE_ID= # Google OAuth Client ID (create it in Google Developer Console: https://console.developers.google.com/)
+AUTH_GOOGLE_SECRET= # Google OAuth Secret (generated in the same place as the Client ID)
+
+AUTH_LINKEDIN_ID= # LinkedIn OAuth Client ID (create it in LinkedIn Developer Portal: https://www.linkedin.com/developers/)
+AUTH_LINKEDIN_SECRET= # LinkedIn OAuth Secret (generated in the same place as the Client ID)
+
+EMAIL_FROM= # The email address you'll use to send verification and reset emails
+EMAIL_PASSWORD= # Password or application-specific password for your email account
+
+AWS_S3_SECRET_ACCESS_KEY= # AWS S3 Secret Access Key (generate it in the AWS IAM Console: https://console.aws.amazon.com/iam/)
+AWS_S3_ACCESS_KEY_ID= # AWS S3 Access Key ID (also in IAM Console)
+AWS_S3_REGION= # AWS S3 Region (e.g., us-east-1)
+AWS_S3_BUCKET_NAME= # Your S3 Bucket Name (create it in the AWS S3 Console: https://console.aws.amazon.com/s3/)
+```
+4. Start the development server:
+
+```bash
+npx prisma generate
+```
+5. run and enjoy:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Deploy Your Own
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Click the button below to deploy this template instantly on Vercel:
 
-## Learn More
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Bendada-abdelmajid/nextjs-authjs&project-name=nextjs-authjs&repository-name=nextjs-authjs)
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
