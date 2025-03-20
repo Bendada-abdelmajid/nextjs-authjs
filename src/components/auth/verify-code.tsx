@@ -3,9 +3,10 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { InputOTP, InputOTPSlot } from '../ui/input-otp';
 import { Button } from '../ui/button';
-import { CircleCheckBig, Loader, TriangleAlert } from 'lucide-react';
-import { verifyEmail } from '@/actions/verify-code';
+import { Loader} from 'lucide-react';
 import { sendVerification } from '@/actions/send-verification';
+import ErrorAlert from '../ui/error-alert';
+import SuccessAlert from '../ui/success-alert';
 
 
 
@@ -13,11 +14,11 @@ import { sendVerification } from '@/actions/send-verification';
 type Props = {
     title: string;
     email: string;
-    setIsValide:(value:boolean)=>void
-
+    onVerify: (code: string) => Promise<{ success?: string; error?: string }>;
+    onSuccess?: () => void;
 }
 
-function VerifyCode({ email, title , setIsValide}: Props) {
+function VerifyCode({ email, title , onVerify, onSuccess}: Props) {
    
     const [otp, setOtp] = useState('')
     const [error, setError] = useState('')
@@ -31,18 +32,23 @@ function VerifyCode({ email, title , setIsValide}: Props) {
             setError("Failed to send verification email. Please try again later.");
         }
     };
-    const verifyCode = async () => {
+    const onVerifyCode = async () => {
         setError("")
+        setSuccess(null)
         setIsLoading(true)
         try {
-            const res = await verifyEmail(otp);
+            const res = await onVerify(otp);
             if (res.error) {
                 setError(res.error);
                 setOtp("")
                 return;
             }
             setSuccess(res?.success || null)
-             setIsValide(true)
+            if (onSuccess){
+                onSuccess();
+            } else{
+                 window.location.href = "/"
+            } 
         
         } catch {
             setError("Something went wrong")
@@ -57,20 +63,8 @@ function VerifyCode({ email, title , setIsValide}: Props) {
             <CardHeader>
                 <CardTitle >{title}</CardTitle>
                 <CardDescription>Enter the verification code sent to your email <br />{email}  </CardDescription>
-                {success && <div className='bg-green-100 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-                    <CircleCheckBig className='text-green-500' />
-                    <div className='text-left'>
-                        <h4 className='text-xs font-medium'>success</h4>
-                        <p className='text-xm opacity-70'>{success}</p>
-                    </div>
-                </div>}
-                {error && <div className='bg-destructive/5 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-                    <TriangleAlert className='text-destructive/60' />
-                    <div className='text-left'>
-                        <h4 className='text-xs font-medium'>Error</h4>
-                        <p className='text-xm opacity-70'>{error}</p>
-                    </div>
-                </div>}
+                <SuccessAlert success={success}/>
+                <ErrorAlert error={error}/>
             </CardHeader>
             <CardContent className='flex flex-col  items-center'>
                 <InputOTP maxLength={6} value={otp} onChange={(e) => setOtp(e)}>
@@ -81,8 +75,7 @@ function VerifyCode({ email, title , setIsValide}: Props) {
                 <Button type='button' onClick={resend} variant={"link"} className="text-center mt-2 flex">Didn't receive a code? Resend</Button>
             </CardContent>
 
-            <Button onClick={verifyCode} disabled={isLoading} className="w-[80%] mx-auto">Verify {isLoading && <Loader className='animate-spin' />}</Button>
-
+            <Button onClick={onVerifyCode} disabled={isLoading} className="w-[80%] mx-auto">Verify {isLoading && <Loader className='animate-spin' />}</Button>
         </Card>
 
     )

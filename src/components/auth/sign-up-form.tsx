@@ -38,7 +38,7 @@ const SignUpForm = () => {
         setError(res.error || "Something went wrong")
         return
       }
-      router.push("/auth/verify-email")
+      router.push("/auth/sign-up/verify-email")
     } catch {
       setError("Something went wrong")
     } finally {

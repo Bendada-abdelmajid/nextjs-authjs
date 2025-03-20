@@ -59,11 +59,6 @@ const FactorOneForm = ({ email }: Props) => {
         try {
             const res = await login(values.password);
             if (res.error) {
-                if (res?.error === "EmailNotVerified") {
-                    setError("Email not verified,  New verification link sent.");
-                    router.push("/auth/verfiy-email")
-                    return;
-                }
                 setError(res?.error || "Something went wrong");
                 return;
             }

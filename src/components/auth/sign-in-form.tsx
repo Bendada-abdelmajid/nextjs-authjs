@@ -36,7 +36,6 @@ const SignInForm = ({ }) => {
     const [success, setSuccess] = useState<string | null>(null);
     const router = useRouter();
 
-
     const form = useForm<z.infer<typeof loginFormSchemaEmail>>({
         resolver: zodResolver(loginFormSchemaEmail),
         defaultValues: {

@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
-import { resetPassword } from "@/actions/auth/resset-password";
-import { signIn } from "next-auth/react";
+import { resetPassword, verifyCode } from "@/actions/auth/resset-password";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -54,11 +53,7 @@ const ResetPasswordForm = ({ email }: Props) => {
       }
       if (res.success) {
         setSuccess(res.success);
-        await signIn("credentials", {
-          email: email,
-          password: values.newPassword,
-          redirectTo: "/",
-        });
+        window.location.href = "/";
       }
     } catch {
       setError("Something went wrong");
@@ -70,7 +65,8 @@ const ResetPasswordForm = ({ email }: Props) => {
     <VerifyCode
       email={email}
       title="Reset password"
-      setIsValide={setIsValide}
+      onVerify={verifyCode}
+      onSuccess={()=> setIsValide(true)}
     />
   ) : (
     <Card className="w-sm ">

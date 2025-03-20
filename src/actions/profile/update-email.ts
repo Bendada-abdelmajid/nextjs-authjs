@@ -20,13 +20,19 @@ export const updateEmail = async (email: string, code: string) => {
     where: { identifier_token: { identifier: email, token: code } },
   });
 
-  if (
-    !verificationToken ||
-    verificationToken.token !== code ||
-    verificationToken.expires < new Date()
-  ) {
-    return { error: "Invalid or expired verification code" };
+
+  if (!verificationToken) {
+    return { error: "Verification token is missing" };
   }
+  
+  if (verificationToken.token !== code) {
+    return { error: "Invalid verification code" };
+  }
+  
+  if (verificationToken.expires < new Date()) {
+    return { error: "Verification code has expired" };
+  }
+  
   await prisma.user.update({
     data: { email },
     where: { id: userId },

@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 import { Separator } from '../ui/separator'
 import { Label } from '../ui/label'
@@ -8,6 +9,8 @@ import { CircleCheckBig, Edit, Loader, Pencil, TriangleAlert } from 'lucide-reac
 import { InputOTP, InputOTPSlot } from '../ui/input-otp'
 import { sendVerification } from '@/actions/send-verification'
 import { updateEmail } from '@/actions/profile/update-email'
+import VerifyCode from '../auth/verify-code'
+import { useSession } from 'next-auth/react'
 
 
 
@@ -17,6 +20,7 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [verifyEmail, setVerifyEmail] = useState(false)
+    const {update}= useSession()
     const hundleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
@@ -35,7 +39,13 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
         }
 
     }
-
+    const onSuccess= async()=>{
+        setTimeout(() => {
+            setVerifyEmail(false)
+           
+        }, 1000)
+        await update({ email})
+    }
     return (
         <div>
 
@@ -64,73 +74,20 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
                     <Button disabled={isLoading} className='min-w-20'>Update {isLoading && <Loader className='animate-spin' />}</Button>
                 </div>
             </form>
-            {verifyEmail && <VerifyEmail email={email} setVerifyEmail={setVerifyEmail} />}
-        </div>
+            {verifyEmail &&
+                <div className='absolute h-full w-full inset-0 bg-black/20 z-20 grid place-content-center' >
+                    <VerifyCode
+                        email={email}
+                        title="Verify your email"
+                        onVerify={(code) => updateEmail(email, code)}
+                        onSuccess={onSuccess}
+
+                    />   </div>}
+
+
+        </div >
 
     )
 }
-const VerifyEmail = ({ email, setVerifyEmail }: { email: string, setVerifyEmail: React.Dispatch<React.SetStateAction<boolean>> }) => {
-    const [otp, setOtp] = useState('')
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const verifyCode = async () => {
-        setError("")
-        setSuccess("")
-        setIsLoading(true)
-        try {
 
-            const res = await updateEmail(email, otp)
-            if (res.error) {
-                setError(res.error)
-                return
-            }
-            setSuccess(res?.success || 'Email updated successfully!')
-            setTimeout(() => {
-                setVerifyEmail(false)
-            }, 1000);
-        } catch (error) {
-            console.log(error)
-            setError('Something went wrong')
-        } finally {
-            setIsLoading(false)
-        }
-    }
-    return (
-        <>
-            <div className='absolute h-full w-full inset-0 bg-black/20 z-20' />
-            <div className='absolute p-5 w-full max-w-sm  bg-white z-30 border rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-                <CardHeader className='text-center'>
-                    <CardTitle >Verify your email</CardTitle>
-                    <CardDescription>Enter the verification code sent to
-                        your email <br />{email} <button onClick={() => setVerifyEmail(false)} className='cursor-pointer inline-flex p-1 align-middle opacity-70 hover:opacity-100'><Pencil size={16} /></button>  </CardDescription>
-                    {success && <div className='bg-green-100 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-                        <CircleCheckBig className='text-green-500' />
-                        <div className='text-left'>
-                            <h4 className='text-xs font-medium'>success</h4>
-                            <p className='text-xm opacity-70'>{success}</p>
-                        </div>
-                    </div>}
-                    {error && <div className='bg-destructive/5 rounded-lg p-3 items-center mt-4 flex gap-4 '>
-                        <TriangleAlert className='text-destructive/60' />
-                        <div className='text-left'>
-                            <h4 className='text-xs font-medium'>Error</h4>
-                            <p className='text-xm opacity-70'>{error}</p>
-                        </div>
-                    </div>}
-                </CardHeader>
-                <CardContent className='flex flex-col items-center mt-4 '>
-                    <InputOTP maxLength={6} value={otp} onChange={(e) => setOtp(e)}>
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <InputOTPSlot key={i + "otp"} index={i} className='border rounded-sm' />
-                        ))}
-                    </InputOTP>
-                    <Button type='button' variant={"link"} className=" mt-2 text-center flex">Didn't receive a code? Resend</Button>
-                </CardContent>
-
-                <Button disabled={isLoading} onClick={verifyCode} className="mx-auto flex mt-2">Verify {isLoading && <Loader className='animate-spin' />}</Button>
-            </div>
-        </>
-    )
-}
 export default EmailForm

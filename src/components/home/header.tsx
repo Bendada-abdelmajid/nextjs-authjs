@@ -23,7 +23,7 @@ const Header = () => {
                     <UserButton />
                 </SignedIn>
                 <SignedOut>
-                    <Button size={"sm"}>
+                    <Button size={"sm"} asChild>
                         <Link href={"/auth/sign-in"}>Login</Link>
                     </Button>
                 </SignedOut>

@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
+
 import authConfig from "./auth.config";
 export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
   session: { strategy: "jwt" },
@@ -27,7 +26,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         token.phone = user.phone;
       }
       if (trigger === "update" && session?.image) {
-        token.picture = session.image == "delete" ? null : session.image ;
+        token.picture = session.image == "delete" ? null : session.image;
       }
       if (trigger === "update" && session?.name) {
         token.name = session.name;
@@ -35,27 +34,22 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       if (trigger === "update" && session?.phone) {
         token.phone = session.phone;
       }
- 
+      if (trigger === "update" && session?.email) {
+        token.email = session.email;
+      }
+
       if (account) {
         token.provider = account.provider;
       }
       return token;
     },
-    async session({ session, token, trigger, newSession }) {
+    async session({ session, token }) {
       session.user.id = token.id as string;
       session.user.emailVerified = token.emailVerified as Date | null;
       session.user.hasPassowred = token.hasPassowred;
       session.user.provider = token.provider;
       session.user.phone = token.phone;
-      // if (trigger === "update" && newSession?.image) {
-      //   session.user.picture = newSession.image == "delete" ? null : newSession.image ;
-      // }
-      // if (trigger === "update" && newSession?.name) {
-      //   session.user.name = newSession.name;
-      // }
-      // if (trigger === "update" && newSession?.phone) {
-      //   session.user.phone = newSession.phone;
-      // }
+
       return session;
     },
   },

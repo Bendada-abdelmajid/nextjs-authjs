@@ -9,7 +9,6 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isLogedIn = !!req.auth;
   
-
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiPrefixAuth);
   const isPuplic = puplicRoutes.includes(nextUrl.pathname);
   const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
