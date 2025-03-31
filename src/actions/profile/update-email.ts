@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth, unstable_update } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 export const updateEmail = async (email: string, code: string) => {
@@ -42,6 +42,7 @@ export const updateEmail = async (email: string, code: string) => {
   await prisma.verificationToken.delete({
     where: { identifier_token: { identifier: email, token: code } },
   });
+  await unstable_update({ ...session.user, email});
 
   return { success: "Email updated successfully!" };
 };

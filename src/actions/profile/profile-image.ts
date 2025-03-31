@@ -1,5 +1,5 @@
 "use server";
-import { auth } from "@/auth";
+import { auth, unstable_update } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import {
   S3Client,
@@ -53,7 +53,7 @@ export async function deleteFileFromS3(imageUrl: string) {
         where: { id: session.user.id },
         data: { image: null },
       });
-
+    await unstable_update({ ...session.user, image:"delete" });
 
   } catch (error) {
     console.error("S3 Delete Error:", error);
@@ -88,8 +88,11 @@ export const uploadProfileImage = async (file: File) => {
       where: { id: session.user.id },
       data: { image: imageUrl },
     });
-
+  
+       
+    await unstable_update({ ...session.user, image:imageUrl });
     return { success: true, file: imageUrl };
+
   } catch (error) {
     console.error("Upload error:", error);
     return { error: "An error occurred while uploading the file." };

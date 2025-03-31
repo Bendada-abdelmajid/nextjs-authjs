@@ -5,18 +5,18 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "../ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Lock, User, Shield } from "lucide-react";
+import {  User, Shield } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import PasswordForm from "./password-form";
 import ProfileForm from "./profile-form";
 import DeleteAccount from "./delete-account";
-import { Button } from "../ui/button";
-import { useSession } from "next-auth/react";
+
+
 import { getUserAccounts } from "@/actions/profile/user-accounts";
-import { UseCurrentUser } from "@/lib/use-current-user";
+import { useAuth } from "../auth-provider";
+
 type Props = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean;
@@ -24,8 +24,8 @@ type Props = {
 
 const ManageAccount = ({ setOpen, open }: Props) => {
     const [activeTab, setActiveTab] = useState("profile");
-    const user = UseCurrentUser();
-    const {data:session} = useSession()
+
+    const { user } = useAuth()
     const [accounts, setAccounts] = useState<string[] | null>(null)
     useEffect(() => {
         async function getUsers() {
@@ -60,12 +60,12 @@ const ManageAccount = ({ setOpen, open }: Props) => {
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="profile">
-                            <ProfileForm setActiveTab={setActiveTab} />
+                            <ProfileForm />
                         </TabsContent>
                         <TabsContent value="account">
                             <div className="space-y-6">
                                 <PasswordForm />
-                              
+
 
                                 {accounts && accounts?.length > 0 && <>   <Separator /><div className="space-y-2">
                                     <h4 className="font-medium">Connected accounts</h4>
@@ -74,19 +74,19 @@ const ManageAccount = ({ setOpen, open }: Props) => {
                                             <div className="flex  gap-2 ">
                                                 <h4 className="text-sm capitalize">{el}</h4>
                                                 <div>
-                                                <p className="opacity-70 text-sm">•  {user?.email}</p>
-                                                <p className="text-xs ml-2 opacity-60 mt-0.5"
-                                            >This account has been <b>{user.provider == el ? "connected ":"disconnected"}</b>.</p>
+                                                    <p className="opacity-70 text-sm">•  {user?.email}</p>
+                                                    <p className="text-xs ml-2 opacity-60 mt-0.5"
+                                                    >This account has been <b>{user?.provider == el ? "connected " : "disconnected"}</b>.</p>
                                                 </div>
-                                                
+
                                                 {/* <Button size={"sm"} variant={"ghost"} className="ml-auto text-xs !text-destructive">Delete</Button> */}
                                             </div>
-                                           
+
 
                                         </div>
                                     ))}
-                              
-                                </div> </> }
+
+                                </div> </>}
                                 <Separator />
                                 <DeleteAccount />
                             </div>

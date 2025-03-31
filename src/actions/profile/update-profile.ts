@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { auth, unstable_update } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { profileSchema } from "@/lib/schemas";
 
@@ -24,8 +24,10 @@ export const updateProfile = async (formData: RegisterInput) => {
       where: { id: userId },
       data: { name, phoneNumber: phone },
     });
-    
-    
+
+    await unstable_update({ ...session.user, name, phone });
+   
+
     return { success: "User updated with success" };
   } catch (err) {
     return { error: (err as Error).message || "Somting wenth wrong" };

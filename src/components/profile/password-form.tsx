@@ -6,11 +6,12 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { updatePassword } from '@/actions/profile/update-password'
 import { CircleCheckBig, TriangleAlert } from 'lucide-react'
-import { UseCurrentUser } from '@/lib/use-current-user'
+import { useAuth } from '../auth-provider'
+
 
 
 const PasswordForm = () => {
-    const user = UseCurrentUser();
+    const {user} = useAuth();
     const [currentPassword, setCurrentPassword] = useState("")
     const [newPassword, setNewPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")

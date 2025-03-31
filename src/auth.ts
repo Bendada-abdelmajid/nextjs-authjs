@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 
 import authConfig from "./auth.config";
-export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
+export const { auth, handlers, signIn, signOut , unstable_update} = NextAuth({
   session: { strategy: "jwt" },
   events: {
     async linkAccount({ user }) {
@@ -16,14 +16,26 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         },
       });
     },
+    updateUser: async (msg) => {
+      console.log({ msg });
+    },
   },
+
   callbacks: {
     async jwt({ token, user, trigger, session, account }) {
       if (user) {
         token.id = user.id;
         token.emailVerified = user.emailVerified;
         token.hasPassowred = user.hasPassowred;
-        token.phone = user.phone;
+      }
+      if (token?.email) {
+        const user = await prisma.user.findUnique({
+          where: { email: token.email },
+        });
+
+        if (user) {
+          token.phone = user.phoneNumber || "";
+        }
       }
       if (trigger === "update" && session?.image) {
         token.picture = session.image == "delete" ? null : session.image;
@@ -41,6 +53,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       if (account) {
         token.provider = account.provider;
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -53,6 +66,7 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       return session;
     },
   },
+
   pages: {
     signIn: "/auth/signin",
     error: "/auth/error",

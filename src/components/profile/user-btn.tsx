@@ -3,16 +3,16 @@ import React, { useState } from 'react'
 
 import { Button } from '../ui/button'
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { UseCurrentUser } from '@/lib/use-current-user';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { LogOut, Settings } from 'lucide-react';
 import ThemeSwitch from '../theme-switch';
 import ManageAccount from './manage-account';
 import { signOut } from 'next-auth/react';
+import { useAuth } from '../auth-provider';
 
 const UserButton = () => {
-    const user = UseCurrentUser();
+    const {user} = useAuth();
     const [openMangeAccount, setOpenManageAccount]= useState(false)
 
     return (
@@ -21,7 +21,7 @@ const UserButton = () => {
             <DropdownMenuTrigger asChild >
                 <Button size={"icon"} variant={"ghost"} className='rounded-full size-9'>
                     <Avatar className="size-9">
-                        <AvatarImage src={user?.image} />
+                        <AvatarImage src={user?.image || undefined} />
                         <AvatarFallback className="uppercase">
                             {(user?.name as string)?.slice(0, 2)}
                         </AvatarFallback>
@@ -32,7 +32,7 @@ const UserButton = () => {
                
                 <div className="flex gap-4 px-3 py-3">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={user?.image} />
+                        <AvatarImage src={user?.image || ""} />
                         <AvatarFallback className="uppercase">
                             {(user?.name as string)?.slice(0, 2)}
                         </AvatarFallback>

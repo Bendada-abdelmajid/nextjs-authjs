@@ -1,4 +1,3 @@
-import GitHub from "next-auth/providers/github";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +10,7 @@ export default {
   providers: [
     Google({
       allowDangerousEmailAccountLinking: true,
+      
     }),
     Linkedin({allowDangerousEmailAccountLinking: true }),
     Credentials({
@@ -37,7 +37,7 @@ export default {
         if (!isValid) {
           return null;
         }
-
+        console.log("user ahmade",user)
         return {
           id: user.id,
           name: user.name,
@@ -45,7 +45,7 @@ export default {
           emailVerified: user.emailVerified,
           image: user.image,
           hasPassowred: user.password ? true : false,
-          phone:user.phoneNumber || ""
+          phone:user.phoneNumber||""
         };
       },
     }),

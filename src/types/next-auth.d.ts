@@ -6,7 +6,8 @@ declare module "next-auth" {
     id: string;
     emailVerified?: Date | null;
     hasPassowred?:boolean;
-    phone?:string
+    phone?:string;
+    provider?:string;
   }
   interface Session {
     user: {

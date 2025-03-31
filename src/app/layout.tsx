@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-
-import SessionProvider from "@/lib/SessionProvider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { auth } from "@/auth";
+import { AuthProvider } from "@/components/auth-provider";
 
 
 
@@ -21,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children, 
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -33,7 +32,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.className}  antialiased`}
       >
-        <SessionProvider session={session}>
+        <AuthProvider session={session}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -42,7 +41,7 @@ export default async function RootLayout({
           >
             {children}
           </ThemeProvider>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
 

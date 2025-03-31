@@ -1,16 +1,17 @@
 "use client"
 import React, { useState } from 'react'
-import { Separator } from '../ui/separator'
+
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { CircleCheckBig, Edit, Loader, Pencil, TriangleAlert } from 'lucide-react'
-import { InputOTP, InputOTPSlot } from '../ui/input-otp'
+
+import {  Loader,TriangleAlert } from 'lucide-react'
+
 import { sendVerification } from '@/actions/send-verification'
 import { updateEmail } from '@/actions/profile/update-email'
 import VerifyCode from '../auth/verify-code'
-import { useSession } from 'next-auth/react'
+
+import { useAuth } from '../auth-provider'
 
 
 
@@ -20,7 +21,7 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [verifyEmail, setVerifyEmail] = useState(false)
-    const {update}= useSession()
+    const {update}= useAuth()
     const hundleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
@@ -44,7 +45,7 @@ const EmailForm = ({ cancel }: { cancel: () => void }) => {
             setVerifyEmail(false)
            
         }, 1000)
-        await update({ email})
+        update({ email})
     }
     return (
         <div>
